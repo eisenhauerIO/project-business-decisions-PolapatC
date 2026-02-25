@@ -1,7 +1,7 @@
 [project]
-name = "student-project"
+name = "polapat-econ481-project"
 version = "0.1.0"
-description = "Replication of Lindo et al. (2010) - Academic Probation RDD Analysis"
+description = "Replication of Autor et al. (2014)"
 requires-python = ">=3.11"
 
 [tool.ruff]

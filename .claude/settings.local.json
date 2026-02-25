@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3:*)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(pip install:*)",
+      "Bash(file:*)",
+      "Bash(ls:*)",
+      "Bash(wc:*)",
+      "Bash(\"helper_files/README.md\":*)",
+      "Bash(\"PROJECT_SUMMARY.md\":*)",
+      "Bash(python:*)",
+      "Bash(\"c:\\\\Users\\\\polap\\\\ECON481\\\\project-business-decisions-PolapatC\\\\helper_files\\\\presentable_code.ipynb\":*)"
+    ]
+  }
+}
