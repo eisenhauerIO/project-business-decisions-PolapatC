@@ -5,9 +5,14 @@ This module contains functions for running and formatting regression analyses
 replicating Table 3 (Effect of Rent Control Removal on Assessed Property Values)
 from Autor, Palmer, & Pathak (2014).
 """
+import warnings
 from linearmodels.panel import PanelOLS
+from linearmodels.panel.model import AbsorbingEffectWarning
 import pandas as pd
 import numpy as np
+
+warnings.filterwarnings("ignore", category=AbsorbingEffectWarning)
+warnings.filterwarnings("ignore", category=RuntimeWarning, message="invalid value encountered in sqrt")
 from statsmodels.formula.api import ols
 from statsmodels.iolib.summary2 import summary_col
 
