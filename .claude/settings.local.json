@@ -11,7 +11,8 @@
       "Bash(\"helper_files/README.md\":*)",
       "Bash(\"PROJECT_SUMMARY.md\":*)",
       "Bash(python:*)",
-      "Bash(\"c:\\\\Users\\\\polap\\\\ECON481\\\\project-business-decisions-PolapatC\\\\helper_files\\\\presentable_code.ipynb\":*)"
+      "Bash(\"c:\\\\Users\\\\polap\\\\ECON481\\\\project-business-decisions-PolapatC\\\\helper_files\\\\presentable_code.ipynb\":*)",
+      "WebFetch(domain:eisenhauerio.github.io)"
     ]
   }
 }
