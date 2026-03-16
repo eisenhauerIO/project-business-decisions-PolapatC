@@ -12,7 +12,8 @@ import pandas as pd
 import numpy as np
 
 warnings.filterwarnings("ignore", category=AbsorbingEffectWarning)
-warnings.filterwarnings("ignore", category=RuntimeWarning, message="invalid value encountered in sqrt")
+warnings.filterwarnings("ignore", category=RuntimeWarning, module="statsmodels")
+warnings.filterwarnings("ignore", category=RuntimeWarning, message="invalid value encountered")
 from statsmodels.formula.api import ols
 from statsmodels.iolib.summary2 import summary_col
 
