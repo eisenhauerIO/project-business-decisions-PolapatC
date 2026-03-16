@@ -412,7 +412,7 @@ def run_table4_regressions(df_analysis):
 
     result5 = PanelOLS(
         df_spec5['lnvalue'],
-        df_spec5[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post', 'is_house']],
+        df_spec5[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post']],
         entity_effects=True,
         time_effects=True,
         weights=None,
@@ -432,7 +432,7 @@ def run_table4_regressions(df_analysis):
 
     result6 = PanelOLS(
         df_spec6['lnvalue'],
-        df_spec6[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post', 'is_house']],
+        df_spec6[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post']],
         entity_effects=True,
         time_effects=True,
         weights=None,
@@ -452,7 +452,7 @@ def run_table4_regressions(df_analysis):
 
     result7 = PanelOLS(
         df_spec7['lnvalue'],
-        df_spec7[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post', 'is_house']],
+        df_spec7[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post']],
         entity_effects=True,
         time_effects=True,
         weights=None,
