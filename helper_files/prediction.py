@@ -61,7 +61,7 @@ def run_table3_regressions(df_analysis):
 
     # Specification 1: Year FE + Structure type dummies only
     print("Running Specification (1): Year FE + Structure Type...")
-    formula1 = 'lnvalue ~ rc + post + rc_post + C(year_str) + is_house'
+    formula1 = 'lnvalue ~ rc + rc_post + C(year_str) + is_house'
     result1 = ols(formula1, data=df_work).fit(
         cov_type='cluster', cov_kwds={'groups': df_work['bg90']}
     )
@@ -70,7 +70,7 @@ def run_table3_regressions(df_analysis):
 
     # Specification 2: Add Block Group FE
     print("Running Specification (2): + Block Group FE...")
-    formula2 = 'lnvalue ~ rc + post + rc_post + C(year_str) + is_house + C(bg90_str)'
+    formula2 = 'lnvalue ~ rc + rc_post + C(year_str) + is_house + C(bg90_str)'
     result2 = ols(formula2, data=df_work).fit(
         cov_type='cluster', cov_kwds={'groups': df_work['bg90']}
     )
@@ -79,7 +79,7 @@ def run_table3_regressions(df_analysis):
 
     # Specification 3: Add Tract × Post interactions (tract-specific time trends)
     print("Running Specification (3): + Tract × Post FE...")
-    formula3 = 'lnvalue ~ rc + post + rc_post + C(year_str) + is_house + C(bg90_str) + C(tract_post)'
+    formula3 = 'lnvalue ~ rc + rc_post + C(year_str) + is_house + C(bg90_str) + C(tract_post)'
     result3 = ols(formula3, data=df_work).fit(
         cov_type='cluster', cov_kwds={'groups': df_work['bg90']}
     )
@@ -89,20 +89,23 @@ def run_table3_regressions(df_analysis):
     # Specification 4: Add Map-lot FE (property-level fixed effects)
     print("Running Specification (4): + Map-lot FE (Preferred)...")
     # Prepare data for panel format (requires multi-index)
-    df_spec4 = df_work[['lnvalue', 'rc_post', 'year_str', 'is_house', 'bg90_str', 'tract_post', 'ml_str']].copy()
+    df_spec4 = df_work[['lnvalue', 'rc_post', 'year_str', 'bg90_str', 'tract_post', 'ml_str']].copy()
     df_spec4['year_str'] = df_spec4['year_str'].astype(int)
     df_spec4['ml_str'] = df_spec4['ml_str'].astype(str)
+    df_spec4['bg90_cat'] = pd.Categorical(df_spec4['bg90_str'])
+    df_spec4['tract_post_cat'] = pd.Categorical(df_spec4['tract_post'])
 
     # Set multi-index for panel regression
     df_spec4 = df_spec4.set_index(['ml_str', 'year_str'])
 
-    # PanelOLS with entity FE (map-lot) and time FE
+    # PanelOLS with entity FE (map-lot) and time FE + block group + tract×post
     result4 = PanelOLS(
         df_spec4['lnvalue'],
-        df_spec4[['rc_post', 'is_house']],
+        df_spec4[['rc_post']],
         entity_effects=True,  # Map-lot FE
         time_effects=True,    # Year FE
-        weights=None
+        other_effects=df_spec4[['bg90_cat', 'tract_post_cat']],
+        drop_absorbed=True
     )
     result4 = result4.fit(cov_type='clustered', cluster_entity=True)
 
@@ -405,18 +408,16 @@ def run_table4_regressions(df_analysis):
 
     # Specification 5: Map-lot FE without Block Group FE
     print("Running Specification (5): Map-lot FE (no Block Group FE)...")
-    df_spec5 = df_work[['lnvalue', 'rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post', 'year_str', 'is_house', 'ml_str']].copy()
+    df_spec5 = df_work[['lnvalue', 'rc_post', 'rci_post', 'rc_rci_post', 'year_str', 'ml_str']].copy()
     df_spec5['year_str'] = df_spec5['year_str'].astype(int)
     df_spec5['ml_str'] = df_spec5['ml_str'].astype(str)
     df_spec5 = df_spec5.set_index(['ml_str', 'year_str'])
 
     result5 = PanelOLS(
         df_spec5['lnvalue'],
-        df_spec5[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post']],
+        df_spec5[['rc_post', 'rci_post', 'rc_rci_post']],
         entity_effects=True,
         time_effects=True,
-        weights=None,
-        check_rank=False,
         drop_absorbed=True
     )
     result5 = result5.fit(cov_type='clustered', cluster_entity=True)
@@ -425,18 +426,18 @@ def run_table4_regressions(df_analysis):
 
     # Specification 6: Map-lot FE + Block Group FE
     print("Running Specification (6): Map-lot FE + Block Group FE...")
-    df_spec6 = df_work[['lnvalue', 'rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post', 'year_str', 'is_house', 'bg90_str', 'ml_str']].copy()
+    df_spec6 = df_work[['lnvalue', 'rc_post', 'rci_post', 'rc_rci_post', 'year_str', 'bg90_str', 'ml_str']].copy()
     df_spec6['year_str'] = df_spec6['year_str'].astype(int)
     df_spec6['ml_str'] = df_spec6['ml_str'].astype(str)
+    df_spec6['bg90_cat'] = pd.Categorical(df_spec6['bg90_str'])
     df_spec6 = df_spec6.set_index(['ml_str', 'year_str'])
 
     result6 = PanelOLS(
         df_spec6['lnvalue'],
-        df_spec6[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post']],
+        df_spec6[['rc_post', 'rci_post', 'rc_rci_post']],
         entity_effects=True,
         time_effects=True,
-        weights=None,
-        check_rank=False,
+        other_effects=df_spec6['bg90_cat'],
         drop_absorbed=True
     )
     result6 = result6.fit(cov_type='clustered', cluster_entity=True)
@@ -445,18 +446,19 @@ def run_table4_regressions(df_analysis):
 
     # Specification 7: Map-lot FE + Block Group FE + Tract × Post
     print("Running Specification (7): Map-lot FE + Block Group FE + Tract×Post FE...")
-    df_spec7 = df_work[['lnvalue', 'rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post', 'year_str', 'is_house', 'bg90_str', 'tract_post', 'ml_str']].copy()
+    df_spec7 = df_work[['lnvalue', 'rc_post', 'rci_post', 'rc_rci_post', 'year_str', 'bg90_str', 'tract_post', 'ml_str']].copy()
     df_spec7['year_str'] = df_spec7['year_str'].astype(int)
     df_spec7['ml_str'] = df_spec7['ml_str'].astype(str)
+    df_spec7['bg90_cat'] = pd.Categorical(df_spec7['bg90_str'])
+    df_spec7['tract_post_cat'] = pd.Categorical(df_spec7['tract_post'])
     df_spec7 = df_spec7.set_index(['ml_str', 'year_str'])
 
     result7 = PanelOLS(
         df_spec7['lnvalue'],
-        df_spec7[['rc_post', 'rci_post', 'non_rc_rci_post', 'rc_rci_post']],
+        df_spec7[['rc_post', 'rci_post', 'rc_rci_post']],
         entity_effects=True,
         time_effects=True,
-        weights=None,
-        check_rank=False,
+        other_effects=df_spec7[['bg90_cat', 'tract_post_cat']],
         drop_absorbed=True
     )
     result7 = result7.fit(cov_type='clustered', cluster_entity=True)
